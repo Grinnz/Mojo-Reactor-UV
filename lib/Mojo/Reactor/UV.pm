@@ -139,8 +139,10 @@ sub _next {
 
 sub _timer {
 	my ($self, $recurring, $after, $cb) = @_;
-	$after *= 1000;
-	my $recur_after = $after || 1; # Timer will not repeat with interval of 0
+	$after *= 1000; # Intervals in milliseconds
+	my $recur_after = $after;
+	# Timer will not repeat with (integer) interval of 0
+	$recur_after = 1 if $recurring and $after < 1;
 	
 	my $id = $self->_id;
 	weaken $self;
