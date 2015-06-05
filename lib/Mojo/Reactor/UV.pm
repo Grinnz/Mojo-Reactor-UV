@@ -47,7 +47,7 @@ sub one_tick {
 	my $self = shift;
 	# Just one tick
 	local $self->{running} = 1 unless $self->{running};
-	UV::run(UV::RUN_ONCE);
+	UV::run(UV::RUN_ONCE) or $self->stop;
 }
 
 sub recurring { shift->_timer(1, @_) }
@@ -106,7 +106,7 @@ sub watch {
 	else {
 		weaken $self;
 		my $cb = sub {
-			my ($w, $status, $events) = @_;
+			my ($status, $events) = @_;
 			return $self->_error if $status < 0;
 			$self->_try('I/O watcher', $self->{io}{$fd}{cb}, 0)
 				if UV::READABLE & $events;
@@ -140,7 +140,7 @@ sub _next {
 sub _timer {
 	my ($self, $recurring, $after, $cb) = @_;
 	$after *= 1000;
-	#$after ||= 0.1 if $recurring;
+	my $recur_after = $after || 1; # Timer will not repeat with interval of 0
 	
 	my $id = $self->_id;
 	weaken $self;
@@ -149,8 +149,14 @@ sub _timer {
 		$self->_try('Timer', $cb);
 	};
 	my $w = $self->{timers}{$id}{watcher} = UV::timer_init();
-	$self->_error if UV::timer_start($w, $after, $after, $wrapper) < 0;
+	$self->_error if UV::timer_start($w, $after, $recur_after, $wrapper) < 0;
 	
+	if (DEBUG) {
+		my $is_recurring = $recurring ? ' (recurring)' : '';
+		my $seconds = $after / 1000;
+		warn "-- Set timer $id after $seconds seconds$is_recurring\n";
+	}
+		
 	return $id;
 }
 

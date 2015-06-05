@@ -273,7 +273,6 @@ Mojo::IOLoop->client(
         my ($stream, $chunk) = @_;
         $buffer .= $chunk;
         return unless $buffer eq 'test321';
-        #EV::break(EV::BREAK_ALL());
         Mojo::IOLoop->stop;
       }
     );
@@ -282,7 +281,7 @@ Mojo::IOLoop->client(
     $client_err = $@;
   }
 );
-UV::run();
+Mojo::IOLoop->start;
 ok !Mojo::IOLoop->is_running, 'loop is not running';
 like $server_err, qr/^Mojo::IOLoop already running/, 'right error';
 like $client_err, qr/^Mojo::IOLoop already running/, 'right error';
