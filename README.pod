@@ -38,9 +38,23 @@ Mojo::Reactor::UV - UV backend for Mojo::Reactor
   # Start reactor if necessary
   $reactor->start unless $reactor->is_running;
 
+  # Or in an application using Mojo::IOLoop
+  use Mojo::Reactor::UV;
+  use Mojo::IOLoop;
+
+  # Or in a Mojolicious application
+  $ MOJO_REACTOR=Mojo::Reactor::UV hypnotoad script/myapp
+
 =head1 DESCRIPTION
 
-L<Mojo::Reactor::UV> is a low-level event reactor based on L<UV>.
+L<Mojo::Reactor::UV> is an event reactor for L<Mojo::IOLoop> that uses
+C<libuv>. The usage is exactly the same as other L<Mojo::Reactor>
+implementations such as L<Mojo::Reactor::Poll>. L<Mojo::Reactor::UV> will be
+used as the default backend for L<Mojo::IOLoop> if it is loaded before
+L<Mojo::IOLoop> or any module using the loop. However, when invoking a
+L<Mojolicious> application through L<morbo> or L<hypnotoad>, the reactor must
+be set as the default by setting the C<MOJO_REACTOR> environment variable to
+C<Mojo::Reactor::UV>.
 
 =head1 EVENTS
 
@@ -162,6 +176,13 @@ this method requires an active I/O watcher.
 
   # Pause watching for events
   $reactor->watch($handle, 0, 0);
+
+=head1 CAVEATS
+
+When using L<Mojo::IOLoop> with L<UV>, the event loop must be controlled by
+L<Mojo::IOLoop> or L<Mojo::Reactor::UV>, such as with the methods L</"start">,
+L</"stop">, and L</"one_tick">. Starting or stopping the event loop through
+L<UV> will not provide required functionality to L<Mojo::IOLoop> applications.
 
 =head1 BUGS
 
