@@ -353,6 +353,13 @@ L<Mojo::IOLoop> or L<Mojo::Reactor::UV>, such as with the methods L</"start">,
 L</"stop">, and L</"one_tick">. Starting or stopping the event loop through
 L<UV> will not provide required functionality to L<Mojo::IOLoop> applications.
 
+Care should be taken that file descriptors are not closed while being watched
+by the reactor. They can be safely closed after calling L</"watch"> with
+C<readable> and C<writable> set to 0, or after removing the handle with
+L</"remove"> or L</"reset">.
+
+On windows, C<libuv> can only watch sockets, not regular filehandles.
+
 =head1 BUGS
 
 Report any issues on the public bugtracker.
