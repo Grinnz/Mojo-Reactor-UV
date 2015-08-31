@@ -1,4 +1,5 @@
 {{$NEXT}}
+  - Switch installer to Module::Build::Tiny
 
 0.001     2015-06-05 18:10:25 EDT
   - First release
