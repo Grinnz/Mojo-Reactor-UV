@@ -20,7 +20,7 @@ sub DESTROY { undef $UV }
 sub again {
 	my $self = shift;
 	croak 'Timer not active' unless my $timer = $self->{timers}{shift()};
-	$self->_error if UV::timer_again($timer->{watcher}) < 0;
+	$self->_error($timer->{watcher}->again);
 }
 
 sub io {
@@ -47,7 +47,7 @@ sub one_tick {
 	my $self = shift;
 	# Just one tick
 	local $self->{running} = 1 unless $self->{running};
-	UV::run(UV::RUN_ONCE) or $self->stop;
+	$self->_loop->run(UV::Loop::UV_RUN_ONCE) or $self->stop;
 }
 
 sub recurring { shift->_timer(1, @_) }
@@ -60,14 +60,14 @@ sub remove {
 		if (exists $self->{io}{$fd}) {
 			warn "-- Removed IO watcher for $fd\n" if DEBUG;
 			my $w = delete $self->{io}{$fd}{watcher};
-			UV::close($w) if $w;
+			$w->close if $w;
 		}
 		return !!delete $self->{io}{$fd};
 	} else {
 		if (exists $self->{timers}{$remove}) {
 			warn "-- Removed timer $remove\n" if DEBUG;
 			my $w = delete $self->{timers}{$remove}{watcher};
-			UV::close($w) if $w;
+			$w->close if $w;
 		}
 		return !!delete $self->{timers}{$remove};
 	}
@@ -75,7 +75,7 @@ sub remove {
 
 sub reset {
 	my $self = shift;
-	UV::walk(sub { UV::close($_[0]) });
+	$self->_loop->walk(sub { $_[0]->close });
 	delete @{$self}{qw(io next_tick next_timer timers)};
 }
 
@@ -96,38 +96,41 @@ sub watch {
 	croak 'I/O watcher not active' unless my $io = $self->{io}{$fd};
 	
 	my $mode = 0;
-	$mode |= UV::READABLE if $read;
-	$mode |= UV::WRITABLE if $write;
+	$mode |= UV::Poll::UV_READABLE if $read;
+	$mode |= UV::Poll::UV_WRITABLE if $write;
 	
 	my $w;
-	unless ($w = $io->{watcher}) { $w = $io->{watcher} = UV::poll_init($fd); }
+	unless ($w = $io->{watcher}) { $w = $io->{watcher} = UV::Poll->new($fd); }
 	
-	if ($mode == 0) { $self->_error if UV::poll_stop($w) < 0; }
+	if ($mode == 0) { $self->_error($w->stop); }
 	else {
 		weaken $self;
 		my $cb = sub {
 			my ($status, $events) = @_;
-			return $self->_error if $status < 0;
+			return $self->_error($status) if $status < 0;
 			$self->_try('I/O watcher', $self->{io}{$fd}{cb}, 0)
-				if UV::READABLE & $events;
+				if UV::Poll::UV_READABLE & $events;
 			$self->_try('I/O watcher', $self->{io}{$fd}{cb}, 1)
-				if UV::WRITABLE & $events && $self->{io}{$fd};
+				if UV::Poll::UV_WRITABLE & $events && $self->{io}{$fd};
 		};
-		$self->_error if UV::poll_start($w, $mode, $cb) < 0;
+		$self->_error($w->start($mode, $cb));
 	}
 	
 	return $self;
 }
 
+sub _loop { UV::Loop->default_loop }
+
 sub _error {
-	my $self = shift;
-	$self->emit(error => sprintf "UV error: %s", UV::strerror(UV::last_error()));
+	my ($self, $code) = @_;
+	$self->emit(error => sprintf "UV error: %s", UV::strerror($code)) if $code < 0;
+	return $code;
 }
 
 sub _id {
 	my $self = shift;
 	my $id;
-	do { $id = md5_sum 't' . UV::now() . rand 999 } while $self->{timers}{$id};
+	do { $id = md5_sum 't' . $self->_loop->now() . rand 999 } while $self->{timers}{$id};
 	return $id;
 }
 
@@ -150,8 +153,8 @@ sub _timer {
 		$self->remove($id) unless $recurring;
 		$self->_try('Timer', $cb);
 	};
-	my $w = $self->{timers}{$id}{watcher} = UV::timer_init();
-	$self->_error if UV::timer_start($w, $after, $recur_after, $wrapper) < 0;
+	my $w = $self->{timers}{$id}{watcher} = UV::Timer->new;
+	$self->_error($w->start($after, $recur_after, $wrapper));
 	
 	if (DEBUG) {
 		my $is_recurring = $recurring ? ' (recurring)' : '';
