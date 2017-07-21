@@ -106,7 +106,7 @@ sub watch {
 	else {
 		weaken $self;
 		my $cb = sub {
-			my ($status, $events) = @_;
+			my ($w, $status, $events) = @_;
 			return $self->_error($status) if $status < 0;
 			$self->_try('I/O watcher', $self->{io}{$fd}{cb}, 0)
 				if UV::Poll::UV_READABLE & $events;
