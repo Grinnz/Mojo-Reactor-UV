@@ -8,6 +8,9 @@ use Mojo::Reactor::Poll;
 use Mojo::Util 'md5_sum';
 use Scalar::Util 'weaken';
 use UV;
+use UV::Poll;
+use UV::Timer;
+use UV::Loop;
 
 use constant DEBUG => $ENV{MOJO_REACTOR_UV_DEBUG} || 0;
 
@@ -100,7 +103,7 @@ sub watch {
 	$mode |= UV::Poll::UV_WRITABLE if $write;
 	
 	my $w;
-	unless ($w = $io->{watcher}) { $w = $io->{watcher} = UV::Poll->new($fd); }
+	unless ($w = $io->{watcher}) { $w = $io->{watcher} = UV::Poll->new(fd => $fd); }
 	
 	if ($mode == 0) { $self->_error($w->stop); }
 	else {
