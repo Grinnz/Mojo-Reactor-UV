@@ -60,7 +60,7 @@
    "provides" : {
       "Mojo::Reactor::UV" : {
          "file" : "lib/Mojo/Reactor/UV.pm",
-         "version" : "0.002"
+         "version" : "1.000"
       }
    },
    "release_status" : "stable",
@@ -76,7 +76,7 @@
       },
       "x_IRC" : "irc://irc.perl.org/#mojo"
    },
-   "version" : "0.002",
+   "version" : "1.000",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.026001"
@@ -270,7 +270,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "v0.002",
+                  "tag" : "v1.000",
                   "tag_format" : "v%v",
                   "tag_message" : "v%v"
                },
