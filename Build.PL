@@ -92,7 +92,7 @@ EOW
         "Carp" => 0,
         "Mojolicious" => "6.0",
         "Scalar::Util" => 0,
-        "UV" => "1.000",
+        "UV" => "1.000004",
         "perl" => "5.010001"
       },
       "test_requires" => {
