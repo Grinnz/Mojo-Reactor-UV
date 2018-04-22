@@ -58,12 +58,18 @@ C<Mojo::Reactor::UV>.
 
 =head1 EVENTS
 
-L<Mojo::Reactor::UV> inherits all events from L<Mojo::Reactor>.
+L<Mojo::Reactor::UV> inherits all events from L<Mojo::Reactor::Poll>.
 
 =head1 METHODS
 
-L<Mojo::Reactor::UV> inherits all methods from L<Mojo::Reactor> and implements
-the following new ones.
+L<Mojo::Reactor::UV> inherits all methods from L<Mojo::Reactor::Poll> and
+implements the following new ones.
+
+=head2 new
+
+  my $reactor = Mojo::Reactor::UV->new;
+
+Construct a new L<Mojo::Reactor::UV> object.
 
 =head2 again
 
@@ -83,25 +89,6 @@ readable or writable.
     my ($reactor, $writable) = @_;
     say $writable ? 'Handle is writable' : 'Handle is readable';
   });
-
-=head2 is_running
-
-  my $bool = $reactor->is_running;
-
-Check if reactor is running.
-
-=head2 new
-
-  my $reactor = Mojo::Reactor::UV->new;
-
-Construct a new L<Mojo::Reactor::UV> object.
-
-=head2 next_tick
-
-  my $undef = $reactor->next_tick(sub {...});
-
-Invoke callback as soon as possible, but not before returning or other
-callbacks that have been registered with this method, always returns C<undef>.
 
 =head2 one_tick
 
@@ -134,22 +121,6 @@ Remove handle or timer.
   $reactor->reset;
 
 Remove all handles and timers.
-
-=head2 start
-
-  $reactor->start;
-
-Start watching for I/O and timer events, this will block until L</"stop"> is
-called or no events are being watched anymore.
-
-  # Start reactor only if it is not running already
-  $reactor->start unless $reactor->is_running;
-
-=head2 stop
-
-  $reactor->stop;
-
-Stop watching for I/O and timer events.
 
 =head2 timer
 
