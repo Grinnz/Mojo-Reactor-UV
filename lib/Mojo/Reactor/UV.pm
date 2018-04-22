@@ -49,7 +49,7 @@ sub one_tick {
 	my $self = shift;
 	# Just one tick
 	local $self->{running} = 1 unless $self->{running};
-	$self->_loop->run(UV::Loop::UV_RUN_ONCE) or $self->stop;
+	$self->{loop}->run(UV::Loop::UV_RUN_ONCE) or $self->stop;
 }
 
 sub recurring { shift->_timer(1, @_) }
@@ -77,7 +77,7 @@ sub remove {
 
 sub reset {
 	my $self = shift;
-	$self->_loop->walk(sub { $_[0]->close });
+	$self->{loop}->walk(sub { $_[0]->close });
 	delete @{$self}{qw(io next_tick next_timer timers)};
 }
 
@@ -94,7 +94,7 @@ sub watch {
 	$mode |= UV::Poll::UV_WRITABLE if $write;
 	
 	my $w;
-	unless ($w = $io->{watcher}) { $w = $io->{watcher} = UV::Poll->new(loop => $self->_loop, fd => $fd); }
+	unless ($w = $io->{watcher}) { $w = $io->{watcher} = UV::Poll->new(loop => $self->{loop}, fd => $fd); }
 	
 	if ($mode == 0) { $self->_error($w->stop); }
 	else {
@@ -113,8 +113,6 @@ sub watch {
 	return $self;
 }
 
-sub _loop { shift->{loop} }
-
 sub _error {
 	my ($self, $code) = @_;
 	$self->emit(error => sprintf "UV error: %s", UV::strerror($code)) if $code < 0;
@@ -124,7 +122,7 @@ sub _error {
 sub _id {
 	my $self = shift;
 	my $id;
-	do { $id = md5_sum 't' . $self->_loop->now() . rand 999 } while $self->{timers}{$id};
+	do { $id = md5_sum 't' . $self->{loop}->now() . rand 999 } while $self->{timers}{$id};
 	return $id;
 }
 
@@ -141,7 +139,7 @@ sub _timer {
 		$self->remove($id) unless $recurring;
 		$self->_try('Timer', $cb);
 	};
-	my $w = $self->{timers}{$id}{watcher} = UV::Timer->new(loop => $self->_loop);
+	my $w = $self->{timers}{$id}{watcher} = UV::Timer->new(loop => $self->{loop});
 	$self->_error($w->start($after, $recur_after, $wrapper));
 	
 	if (DEBUG) {
