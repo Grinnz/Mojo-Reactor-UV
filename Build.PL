@@ -99,6 +99,7 @@ EOW
         "File::Spec" => 0,
         "IO::Socket::INET" => 0,
         "Module::Metadata" => 0,
+        "Scalar::Util" => 0,
         "Test::More" => "0.88"
       }
     );
@@ -108,6 +109,7 @@ EOW
       "File::Spec" => 0,
       "IO::Socket::INET" => 0,
       "Module::Metadata" => 0,
+      "Scalar::Util" => 0,
       "Test::More" => "0.88"
     );
 
