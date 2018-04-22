@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.001     2018-04-21 20:19:51 EDT
   - Stable release using UV 1.0
   - Use UV loops instead of Poll when multiple reactors are constructed
 
