@@ -84,7 +84,7 @@ EOW
         "Dan Book <dbook\@cpan.org>"
       ],
       "dist_name" => "Mojo-Reactor-UV",
-      "dist_version" => "1.001",
+      "dist_version" => "1.002",
       "license" => "artistic_2",
       "module_name" => "Mojo::Reactor::UV",
       "recursive_test_files" => 1,
