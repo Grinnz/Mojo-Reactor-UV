@@ -1,5 +1,7 @@
 use Mojo::Base -strict;
 
+BEGIN { $ENV{MOJO_REACTOR} = 'Mojo::Reactor::UV' }
+
 use Test::More;
 use IO::Socket::INET;
 use Mojo::Reactor::UV;
@@ -234,6 +236,12 @@ $reactor->timer(0 => sub { die "works!\n" });
 $reactor->start;
 like $err, qr/works!/, 'right error';
 
+# Reset events
+$reactor->on(error => sub { });
+ok $reactor->has_subscribers('error'), 'has subscribers';
+$reactor->reset;
+ok !$reactor->has_subscribers('error'), 'no subscribers';
+
 # Recursion
 $timer   = undef;
 $reactor = $reactor->new;
@@ -256,7 +264,7 @@ package main;
   is(Mojo::Reactor->detect, 'Mojo::Reactor::Test', 'right class');
 }
 
-# UV in control
+# Reactor in control
 is ref Mojo::IOLoop->singleton->reactor, 'Mojo::Reactor::UV', 'right object';
 ok !Mojo::IOLoop->is_running, 'loop is not running';
 my ($buffer, $server_err, $server_running, $client_err, $client_running);
@@ -278,7 +286,7 @@ Mojo::IOLoop->client(
         my ($stream, $chunk) = @_;
         $buffer .= $chunk;
         return unless $buffer eq 'test321';
-        Mojo::IOLoop->stop;
+        Mojo::IOLoop->singleton->reactor->stop;
       }
     );
     $client_running = Mojo::IOLoop->is_running;
@@ -286,7 +294,7 @@ Mojo::IOLoop->client(
     $client_err = $@;
   }
 );
-Mojo::IOLoop->start;
+Mojo::IOLoop->singleton->reactor->start;
 ok !Mojo::IOLoop->is_running, 'loop is not running';
 like $server_err, qr/^Mojo::IOLoop already running/, 'right error';
 like $client_err, qr/^Mojo::IOLoop already running/, 'right error';
