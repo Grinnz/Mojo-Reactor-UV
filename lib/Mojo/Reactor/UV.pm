@@ -13,7 +13,7 @@ use UV::Loop;
 
 use constant DEBUG => $ENV{MOJO_REACTOR_UV_DEBUG} || 0;
 
-our $VERSION = '1.002';
+our $VERSION = '1.003';
 
 my $UV;
 
