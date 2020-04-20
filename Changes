@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.002     2020-04-19 21:40:34 EDT
   - Support changing invocation time of active timers in again method, to
     support keep_alive_timeout added in Mojolicious 8.37
 
