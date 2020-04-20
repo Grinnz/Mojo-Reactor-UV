@@ -36,7 +36,7 @@ sub again {
 	croak 'Timer not active' unless my $timer = $self->{timers}{$id};
 	my $w = $timer->{watcher};
 	if (defined $after) {
-		$after *= 1000;
+		$after *= 1000; # Intervals in milliseconds
 		# Timer will not repeat with (integer) interval of 0
 		$after = 1 if $after < 1;
 		$self->_error($w->repeat($after));
@@ -47,6 +47,7 @@ sub again {
 sub io {
 	my ($self, $handle, $cb) = @_;
 	my $fd = fileno($handle) // croak 'Handle is closed';
+	# Must use existing watcher if present
 	$self->{io}{$fd}{cb} = $cb;
 	warn "-- Set IO watcher for $fd\n" if DEBUG;
 	return $self->watch($handle, 1, 1);
