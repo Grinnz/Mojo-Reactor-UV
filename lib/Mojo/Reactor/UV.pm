@@ -32,9 +32,16 @@ sub new {
 sub DESTROY { undef $UV if shift->{loop_singleton} }
 
 sub again {
-	my $self = shift;
-	croak 'Timer not active' unless my $timer = $self->{timers}{shift()};
-	$self->_error($timer->{watcher}->again);
+	my ($self, $id, $after) = @_;
+	croak 'Timer not active' unless my $timer = $self->{timers}{$id};
+	my $w = $timer->{watcher};
+	if (defined $after) {
+		$after *= 1000;
+		# Timer will not repeat with (integer) interval of 0
+		$after = 1 if $after < 1;
+		$self->_error($w->repeat($after));
+	}
+	$self->_error($w->again);
 }
 
 sub io {
@@ -232,8 +239,10 @@ Construct a new L<Mojo::Reactor::UV> object.
 =head2 again
 
   $reactor->again($id);
+  $reactor->again($id, 0.5);
 
-Restart timer. Note that this method requires an active timer.
+Restart timer and optionally change the invocation time. Note that this method
+requires an active timer.
 
 =head2 io
 
@@ -309,9 +318,10 @@ this method requires an active I/O watcher.
 =head1 CAVEATS
 
 When using L<Mojo::IOLoop> with L<UV>, the event loop must be controlled by
-L<Mojo::IOLoop> or L<Mojo::Reactor::UV>, such as with the methods L<Mojo::IOLoop/start>,
-L<Mojo::IOLoop/stop>, and L</"one_tick">. Starting or stopping the event loop through
-L<UV> will not provide required functionality to L<Mojo::IOLoop> applications.
+L<Mojo::IOLoop> or L<Mojo::Reactor::UV>, such as with the methods
+L<Mojo::IOLoop/"start">, L<Mojo::IOLoop/"stop">, and L</"one_tick">. Starting
+or stopping the event loop through L<UV> will not provide required
+functionality to L<Mojo::IOLoop> applications.
 
 Care should be taken that file descriptors are not closed while being watched
 by the reactor. They can be safely closed after calling L</"watch"> with
