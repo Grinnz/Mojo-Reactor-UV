@@ -151,8 +151,8 @@ this method requires an active I/O watcher.
 =head1 CAVEATS
 
 When using L<Mojo::IOLoop> with L<UV>, the event loop must be controlled by
-L<Mojo::IOLoop> or L<Mojo::Reactor::UV>, such as with the methods L</"start">,
-L</"stop">, and L</"one_tick">. Starting or stopping the event loop through
+L<Mojo::IOLoop> or L<Mojo::Reactor::UV>, such as with the methods L<Mojo::IOLoop/start>,
+L<Mojo::IOLoop/stop>, and L</"one_tick">. Starting or stopping the event loop through
 L<UV> will not provide required functionality to L<Mojo::IOLoop> applications.
 
 Care should be taken that file descriptors are not closed while being watched
