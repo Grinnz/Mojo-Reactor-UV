@@ -4,7 +4,7 @@ runtime:
     Carp: 0
     Mojolicious: '7.37'
     Scalar::Util: 0
-    UV: '1.000008'
+    UV: '1.900'
 test:
   requires:
     IO::Socket::INET: 0

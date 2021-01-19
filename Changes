@@ -1,5 +1,6 @@
 {{$NEXT}}
   - Update IRC metadata to libera.chat
+  - Changes to support UV 2.0
 
 1.002     2020-04-19 21:40:34 EDT
   - Support changing invocation time of active timers in again method, to
