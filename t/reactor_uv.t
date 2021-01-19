@@ -8,7 +8,6 @@ use IO::Socket::INET;
 use Mojo::Reactor::UV;
 use Mojo::Util 'steady_time';
 use Scalar::Util 'refaddr';
-use UV ();
 
 diag "\nLibUV information:";
 diag "version        = ", Alien::libuv->config('version');
@@ -18,13 +17,6 @@ diag "libs           = ", Alien::libuv->libs;
 diag "libs_static    = ", Alien::libuv->libs_static;
 diag "bin_dir        = ", $_ for Alien::libuv->bin_dir;
 diag "Install type   = ", Alien::libuv->install_type;
-diag "Alien::libuv v = ", $Alien::libuv::VERSION;
-
-diag "\nUV Module Information:";
-diag "version        = ", $UV::VERSION;
-
-diag "\nMojo::Reactor::UV Module Information:";
-diag "version        = ", $Mojo::Reactor::UV::VERSION;
 
 # Instantiation
 my $reactor = Mojo::Reactor::UV->new;
