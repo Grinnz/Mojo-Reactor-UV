@@ -1,6 +1,6 @@
 use Mojo::Base -strict;
+use Test::Needs 'Alien::libuv';
 use Test::More;
-use Alien::libuv ();
 
 diag "\nLibUV information:";
 diag "version        = ", Alien::libuv->config('version');

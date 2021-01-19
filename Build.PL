@@ -100,7 +100,8 @@ EOW
         "IO::Socket::INET" => 0,
         "Module::Metadata" => 0,
         "Scalar::Util" => 0,
-        "Test::More" => "0.88"
+        "Test::More" => "0.88",
+        "Test::Needs" => 0
       }
     );
 
@@ -110,7 +111,8 @@ EOW
       "IO::Socket::INET" => 0,
       "Module::Metadata" => 0,
       "Scalar::Util" => 0,
-      "Test::More" => "0.88"
+      "Test::More" => "0.88",
+      "Test::Needs" => 0
     );
 
 
