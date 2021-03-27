@@ -85,7 +85,8 @@ sub remove {
 
 sub reset {
 	my $self = shift;
-	$self->{loop}->walk(sub { $_[0]->close });
+	$_->close for map { $_->{watcher} ? ($_->{watcher}) : () }
+		values %{$self->{io}}, values %{$self->{timers}};
 	$self->SUPER::reset;
 }
 
