@@ -84,7 +84,7 @@ EOW
         "Dan Book <dbook\@cpan.org>"
       ],
       "dist_name" => "Mojo-Reactor-UV",
-      "dist_version" => "1.003",
+      "dist_version" => "1.900",
       "license" => "artistic_2",
       "module_name" => "Mojo::Reactor::UV",
       "recursive_test_files" => 1,
@@ -92,7 +92,7 @@ EOW
         "Carp" => 0,
         "Mojolicious" => "7.37",
         "Scalar::Util" => 0,
-        "UV" => "1.000008",
+        "UV" => "1.900",
         "perl" => "5.010001"
       },
       "test_requires" => {
