@@ -41,7 +41,7 @@
             "Carp" : "0",
             "Mojolicious" : "7.37",
             "Scalar::Util" : "0",
-            "UV" : "1.900",
+            "UV" : "1.909",
             "perl" : "5.010001"
          }
       },
@@ -62,10 +62,10 @@
    "provides" : {
       "Mojo::Reactor::UV" : {
          "file" : "lib/Mojo/Reactor/UV.pm",
-         "version" : "1.900"
+         "version" : "1.901"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "web" : "https://github.com/Grinnz/Mojo-Reactor-UV/issues"
@@ -78,7 +78,7 @@
       },
       "x_IRC" : "ircs://irc.libera.chat/#mojo"
    },
-   "version" : "1.900",
+   "version" : "1.901",
    "x_contributors" : [
       "Chase Whitener <cwhitener@gmail.com>",
       "Dan Book <grinnz@gmail.com>",

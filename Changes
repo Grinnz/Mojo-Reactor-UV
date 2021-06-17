@@ -1,4 +1,5 @@
 {{$NEXT}}
+  - Stable release requiring UV 1.909
 
 1.900     2021-06-16 01:23:42 EDT (TRIAL RELEASE)
   - Changes to support UV 2.0
